@@ -144,6 +144,7 @@
         .card h3 a {
             text-decoration: none;
             color: #1e293b;
+            cursor: pointer;
         }
         .card h3 a:hover {
             color: #2563EB;
@@ -163,6 +164,7 @@
             text-decoration: none;
             font-weight: 600;
             font-size: 0.9rem;
+            cursor: pointer;
         }
         .article-list {
             display: flex;
@@ -269,6 +271,61 @@
             cursor: pointer;
             margin-left: 0.5rem;
         }
+        /* Modal for viewing articles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .modal-content {
+            background: white;
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 20px;
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+        .close-modal:hover {
+            color: #1e293b;
+        }
+        .modal-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+        .modal-content h1 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        .modal-content .article-meta {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .modal-content .article-body {
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+        .modal-content .article-body p {
+            margin-bottom: 1rem;
+        }
         @media (max-width: 768px) {
             .nav {
                 flex-direction: column;
@@ -279,12 +336,9 @@
             .section-title {
                 font-size: 1.4rem;
             }
-            .categories-cloud {
-                gap: 0.5rem;
-            }
-            .cat-tag {
-                padding: 0.3rem 0.8rem;
-                font-size: 0.8rem;
+            .modal-content {
+                margin: 1rem;
+                padding: 1.5rem;
             }
         }
     </style>
@@ -305,6 +359,14 @@
     </div>
 </div>
 
+<!-- Article Modal -->
+<div id="articleModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div id="modalContent"></div>
+    </div>
+</div>
+
 <!-- HOME PAGE -->
 <div class="container" id="homePage">
     <div class="hero">
@@ -312,7 +374,6 @@
         <p>Thoughts, stories, and ideas worth sharing from New Delhi, India</p>
     </div>
 
-    <!-- Categories Section - Click to filter -->
     <div class="categories-cloud" id="categoryFilters">
         <span class="cat-tag active" onclick="filterByCategory('all')">📌 All</span>
     </div>
@@ -331,7 +392,7 @@
     </div>
 </div>
 
-<!-- ABOUT PAGE - 3 Sections -->
+<!-- ABOUT PAGE -->
 <div class="container hidden" id="aboutPage">
     <div class="page-content">
         <h1>📖 About Nemo's Articles</h1>
@@ -372,7 +433,7 @@
     </div>
 </div>
 
-<!-- TERMS PAGE - 3 Detailed Sections -->
+<!-- TERMS PAGE -->
 <div class="container hidden" id="termsPage">
     <div class="page-content">
         <h1>⚖️ Terms & Conditions</h1>
@@ -411,7 +472,7 @@
     </div>
 </div>
 
-<!-- PRIVACY PAGE - 3 Detailed Sections -->
+<!-- PRIVACY PAGE -->
 <div class="container hidden" id="privacyPage">
     <div class="page-content">
         <h1>🔒 Privacy Policy</h1>
@@ -503,7 +564,6 @@
 </div>
 
 <script>
-    // Article Storage
     let articles = [];
     let currentCategoryFilter = 'all';
 
@@ -519,7 +579,7 @@
                     highlight: true,
                     categories: ["Welcome", "Announcement"],
                     excerpt: "Welcome to my new article site! I'll be sharing thoughts on technology, life, and everything in between from New Delhi.",
-                    content: "Full content here..."
+                    content: "Welcome to my article site! 🎉\n\nI'm excited to start this journey. Here's what you can expect:\n\n- Honest reviews\n- Deep dives into tech\n- Personal stories from Delhi\n\n![Welcome Image](https://picsum.photos/id/20/800/400)\n\nStay tuned for more! - Nemo"
                 },
                 {
                     title: "The Future of Technology in India",
@@ -527,7 +587,7 @@
                     highlight: true,
                     categories: ["Technology", "India"],
                     excerpt: "How India's tech scene is evolving and what it means for the future of innovation in Delhi NCR and beyond.",
-                    content: "Full content here..."
+                    content: "India's technology sector is growing at an unprecedented rate. 🚀\n\n![Tech in India](https://picsum.photos/id/0/800/400)\n\nFrom Bangalore to Delhi NCR, startups are changing how we live and work.\n\n## Key Trends to Watch\n\n1. AI adoption across industries\n2. Digital payments revolution\n3. Remote work culture\n\n![Digital India](https://picsum.photos/id/26/800/400)\n\nThe future is bright for Indian tech! What do you think? Share your thoughts."
                 },
                 {
                     title: "5 Productivity Tips That Actually Work",
@@ -535,7 +595,7 @@
                     highlight: false,
                     categories: ["Lifestyle", "Productivity"],
                     excerpt: "Simple, actionable productivity advice that has transformed how I work and live.",
-                    content: "Full content here..."
+                    content: "After years of trying different productivity systems, here's what actually works:\n\n![Productivity](https://picsum.photos/id/1/800/400)\n\n## 1. The 2-Minute Rule\nIf something takes less than 2 minutes, do it immediately.\n\n## 2. Time Blocking\nSchedule your entire day in blocks.\n\n![Time Management](https://picsum.photos/id/91/800/400)\n\n## 3. Single Tasking\nFocus on ONE thing at a time.\n\nTry these tips and let me know what works for you!"
                 }
             ];
             saveArticles();
@@ -547,6 +607,72 @@
 
     function saveArticles() {
         localStorage.setItem('nemo_articles', JSON.stringify(articles));
+    }
+
+    // Convert markdown-style images and formatting to HTML
+    function formatContent(content) {
+        let formatted = content;
+        
+        // Convert markdown images ![alt](url)
+        formatted = formatted.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="max-width:100%; border-radius:12px; margin:1rem 0;">');
+        
+        // Convert markdown links [text](url)
+        formatted = formatted.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color:#2563EB;">$1</a>');
+        
+        // Convert markdown bold **text**
+        formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        // Convert markdown italic *text*
+        formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        
+        // Convert line breaks to paragraphs
+        const paragraphs = formatted.split('\n\n');
+        formatted = paragraphs.map(p => {
+            if (p.startsWith('<img') || p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<li')) {
+                return p;
+            }
+            return `<p>${p.replace(/\n/g, '<br>')}</p>`;
+        }).join('');
+        
+        // Convert markdown headers
+        formatted = formatted.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+        formatted = formatted.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
+        formatted = formatted.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+        
+        // Convert bullet points
+        formatted = formatted.replace(/^- (.*?)(\n|$)/gm, '<li>$1</li>');
+        formatted = formatted.replace(/<li>.*?<\/li>/gs, (match) => `<ul>${match}</ul>`);
+        
+        return formatted;
+    }
+
+    function viewArticle(title) {
+        const article = articles.find(a => a.title === title);
+        if (article) {
+            const modal = document.getElementById('articleModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <h1>${escapeHtml(article.title)}</h1>
+                <div class="article-meta">
+                    📅 ${article.date} | 📁 ${article.categories.join(', ')} | ⏱️ ${Math.ceil(article.content.length / 1000)} min read
+                </div>
+                <div class="article-body">
+                    ${formatContent(article.content)}
+                </div>
+                <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e2e8f0; font-size: 0.85rem; color: #64748b;">
+                    <p>📧 Liked this article? <a href="mailto:pragsnemo01@gmail.com" style="color:#2563EB;">Email me</a> or follow on <a href="https://instagram.com/nemogotmad" target="_blank" style="color:#2563EB;">Instagram @nemogotmad</a></p>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('articleModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
     }
 
     function updateCategoryFilters() {
@@ -568,7 +694,6 @@
     function filterByCategory(category) {
         currentCategoryFilter = category;
         
-        // Update active state on buttons
         document.querySelectorAll('#categoryFilters .cat-tag').forEach(tag => {
             tag.classList.remove('active');
             if (tag.innerText.includes(category) || (category === 'all' && tag.innerText.includes('All'))) {
@@ -635,13 +760,6 @@
         showPage('home');
         filterByCategory(category);
         document.getElementById('homePage').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function viewArticle(title) {
-        const article = articles.find(a => a.title === title);
-        if (article) {
-            alert(`📖 ${article.title}\n\n${article.content}\n\n---\n📅 ${article.date}\n📁 Categories: ${article.categories.join(', ')}`);
-        }
     }
 
     function showPage(page) {
